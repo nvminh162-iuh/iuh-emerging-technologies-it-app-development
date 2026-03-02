@@ -5,7 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 const tableName = 'subjects';
 
 const subjectsModel = {
-    createSubject: async (subject) => {
+    create: async (subject) => {
         const id = uuidv4();
         const params = {
             TableName: tableName,
@@ -26,7 +26,7 @@ const subjectsModel = {
             throw error;
         }
     },
-    getSubjects: async () => {
+    getAll: async () => {
         const params = { TableName: tableName };
         try {
             const subjects = await dynamodb.send(new ScanCommand(params));
@@ -36,7 +36,7 @@ const subjectsModel = {
             throw error;
         }
     },
-    getSubject: async (id) => {
+    getById: async (id) => {
         const params = {
             TableName: tableName,
             KeyConditionExpression: 'id = :id', // Điều kiện để lấy subject dựa trên subjectId
@@ -50,7 +50,7 @@ const subjectsModel = {
             throw error;
         }
     },
-    updateSubject: async (id, subject) => {
+    update: async (id, subject) => {
         const params = {
             TableName: tableName,
             Key: {
@@ -59,8 +59,7 @@ const subjectsModel = {
                 name: subject.name, // bởi vì chúng ta có thêm sort key nên cần thêm name vào key
             },
             UpdateExpression: 'set #t = :type, #s = :semester, #f = :faculty, #i = :image',
-            ExpressionAttributeValues: {
-                // Alias
+            ExpressionAttributeNames: {
                 '#t': 'type',
                 '#s': 'semester',
                 '#f': 'faculty',
@@ -82,7 +81,7 @@ const subjectsModel = {
             throw error;
         }
     },
-    deleteSubject: async (id, name) => {
+    delete: async (id, name) => {
         const params = {
             TableName: tableName,
             Key: {
