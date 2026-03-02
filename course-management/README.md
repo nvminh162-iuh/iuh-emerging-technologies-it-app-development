@@ -2,6 +2,8 @@
 
 ```bash
 npm i aws-sdk ejs express express-session body-parser dotenv
+
+yarn add aws-sdk ejs express express-session body-parser dotenv
 ```
 
 ---
