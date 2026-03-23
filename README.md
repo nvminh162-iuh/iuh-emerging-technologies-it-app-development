@@ -17,3 +17,9 @@ Tiết: 4 - 6
 Phòng: H9.2 (H (CS1))
 GV: Tôn Long Phước
 ```
+
+```
+IUH LAB H9.2
+
+NodeJS: v18.17.1
+```
