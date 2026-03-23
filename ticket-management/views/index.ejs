@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nguyen Van Minh</title>
+</head>
+<body>
+    <h1>Nguyen Van Minh</h1>
+    <h3>Danh sách vé</h3>
+    <button>Thêm vé</button>
+    <table border="1">
+        <tr>
+            <th>ticketId</th>
+            <th>eventName</th>
+            <th>holderName</th>
+            <th>category</th>
+            <th>quantity</th>
+            <th>pricePerTicket</th>
+            <th>eventDate</th>
+            <th>status</th>
+            <th>imageUrl</th>
+            <th>createdAt</th>
+            <th>ACTION</th>
+        </tr>
+        <% if (!tickets || tickets.length === 0) { %>
+            <tr>
+                <td colspan="11">Không có vé</td>
+            </tr>
+        <% } else { %>
+            <% tickets.forEach(ticket => { %>
+                <tr>
+                    <td><%= ticket.ticketId %></td>
+                    <td><%= ticket.eventName %></td>
+                    <td><%= ticket.holderName %></td>
+                    <td><%= ticket.category %></td>
+                    <td><%= ticket.quantity %></td>
+                    <td><%= ticket.pricePerTicket %></td>
+                    <td><%= ticket.eventDate %></td>
+                    <td><%= ticket.status %></td>
+                    <td><%= ticket.imageUrl %></td>
+                    <td><%= ticket.createdAt %></td>
+                    <td>
+                        <a href="/<%= ticket.ticketId %>">Xem</a>
+                        <button>Sửa</button>
+                        <button>Xoá</button>
+                    </td>
+                </tr>
+            <% }) %>
+        <% } %>
+    </table>
+</body>
+</html>

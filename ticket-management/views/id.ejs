@@ -1,0 +1,24 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Xem chi tiết</h1>
+    <% if (ticket == null) { %>
+        <p>Sản phẩm không tồn tại</p>
+    <% } else { %>
+        <p><%= ticket.ticketId %></p>
+        <p><%= ticket.eventName %></p>
+        <p><%= ticket.holderName %></p>
+        <p><%= ticket.category %></p>
+        <p><%= ticket.quantity %></p>
+        <p><%= ticket.pricePerTicket %></p>
+        <p><%= ticket.eventDate %></p>
+        <p><%= ticket.status %></p>
+        <p><%= ticket.imageUrl %></p>
+        <p><%= ticket.createdAt %></p>
+    <% } %>
+</body>
+</html>
