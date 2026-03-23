@@ -8,7 +8,7 @@
 <body>
     <h1>Nguyen Van Minh</h1>
     <h3>Danh sách vé</h3>
-    <button>Thêm vé</button>
+    <a href="/upsert">Thêm vé</a>
     <table border="1">
         <tr>
             <th>ticketId</th>
@@ -41,8 +41,8 @@
                     <td><%= ticket.imageUrl %></td>
                     <td><%= ticket.createdAt %></td>
                     <td>
-                        <a href="/<%= ticket.ticketId %>">Xem</a>
-                        <button>Sửa</button>
+                        <a href="/ticket/<%= ticket.ticketId %>">Xem</a>
+                        <a href="/upsert/<%= ticket.ticketId %>">Sửa</a>
                         <button>Xoá</button>
                     </td>
                 </tr>

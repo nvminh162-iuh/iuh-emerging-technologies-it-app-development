@@ -18,7 +18,8 @@ const getId = async (id) => {
 
 const upsert = async (item) => {
     const params = { TableName: TABLENAME, Item: item }
-    await dynamodbClient(params);
+    await dynamodbClient.send(new PutCommand(params));
+    return item;
 }
 
-module.exports = { getAll, getId }
+module.exports = { getAll, getId, upsert }
