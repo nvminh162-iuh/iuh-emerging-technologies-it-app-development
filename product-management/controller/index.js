@@ -1,12 +1,14 @@
 const { findAll, findById, save, deleteById } = require("../service");
+const { computeAmount, statusLabel } = require('../utils')
+const { validation } = require("../validation")
 
-const findAllController = async (req, res) => {
+const renderAllController = async (req, res) => {
   const items = await findAll();
-  return res.render("index", { items });
+  return res.render("index", { items, computeAmount, statusLabel });
   // return res.status(200).json(items)
 };
 
-const findByIdController = async (req, res) => {
+const renderFormController = async (req, res) => {
   const { id } = req.params;
   const item = id ? await findById(id) : null;
   return res.render("form", { item });
@@ -31,4 +33,4 @@ const deleteByIdController = async (req, res) => {
   }
 }
 
-module.exports = { findAllController, findByIdController, saveController, deleteByIdController };
+module.exports = { renderAllController, renderFormController, saveController, deleteByIdController };

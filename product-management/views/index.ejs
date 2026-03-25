@@ -7,9 +7,7 @@
 </head>
 <body>
     <h1>Danh sách</h1>
-
     <a href="/form">Thêm</a>
-
     <table border="1" width="80%" style="text-align: center;">
         <tr>
             <th>ID</th>
@@ -17,6 +15,8 @@
             <th>Price</th>
             <th>Image</th>
             <th>Quantity</th>
+            <th>Status</th>
+            <th>Amount</th>
             <th>ACTION</th>
         </tr>
         <% if (!items || items.length === 0) { %>
@@ -25,6 +25,8 @@
             </tr>
             <% } else { %>
                 <% items.forEach(item => { %>
+                    <% const status = statusLabel(item?.quantity || 0); %>
+                    <% const amount = computeAmount(item?.price || 0, item?.quantity || 0); %>
                     <tr>
                         <td><%= item.id %></td>
                         <td><%= item.name %></td>
@@ -37,6 +39,8 @@
                             <% } %>
                         </td>
                         <td><%= item.quantity %></td>
+                        <td><%= status %></td>
+                        <td><%= amount %></td>
                         <td>
                             <a href="/form/<%= item.id %>">Sửa</a>
                             <form action="/items/delete/<%= item.id %>" method="POST">
