@@ -19,27 +19,33 @@
             <th>Quantity</th>
             <th>ACTION</th>
         </tr>
-        <tr>
-            <% if (!items || items.length === 0) { %>
+        <% if (!items || items.length === 0) { %>
+            <tr>
                 <td colspan="6">Không có sản phẩm nào</td>
+            </tr>
             <% } else { %>
                 <% items.forEach(item => { %>
-                    <td><%= item.id %></td>
-                    <td><%= item.name %></td>
-                    <td><%= item.price %></td>
-                    <td>
-                        <img src=<%= item.image %> alt="" width="100">
-                    </td>
-                    <td><%= item.quantity %></td>
-                    <td>
-                        <button>Sửa</button>
-                        <button>Xoá</button>
-                    </td>
-                <% }) %>
-            <% } %>
-        </tr>
-        
-            
+                    <tr>
+                        <td><%= item.id %></td>
+                        <td><%= item.name %></td>
+                        <td><%= item.price %></td>
+                        <td>
+                            <% if (item.image) { %>
+                                <img src=<%= item.image %> alt="" width="100">
+                            <% } else { %>
+                                Chưa upload ảnh
+                            <% } %>
+                        </td>
+                        <td><%= item.quantity %></td>
+                        <td>
+                            <a href="/form/<%= item.id %>">Sửa</a>
+                            <form action="/items/delete/<%= item.id %>" method="POST">
+                                <button type="submit">Xoá</button>
+                            </form>
+                        </td>
+                    </tr>
+            <% }) %>
+        <% } %>  
     </table>
 </body>
 </html>

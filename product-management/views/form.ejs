@@ -7,5 +7,20 @@
 <body>
     <h1><%= !item ? "Thêm" : "Sửa" %></h1>
     <a href="/">Quay lại</a>
+    <form action="/items<%= item ? "/" + item.id : "" %>" method="POST" enctype="multipart/form-data">
+        <br>
+        <input type="text" name="name" placeholder="Name" required value="<%= item?.name || '' %>">
+        <br>
+        <input type="number" name="price" placeholder="Price" required value="<%= item?.price || '' %>">
+        <br>
+        <input type="file" name="image" accept="image/*">
+        <br>
+        <input type="number" name="quantity" placeholder="Quantity" required value="<%= item?.quantity || '' %>">
+        <br>
+        <button type="submit">Save</button>
+    </form>
+    <% if (item?.image) { %>
+        <img src=<%= item.image %> alt=<%= item?.name || '' %> width="200">
+    <% } %>
 </body>
 </html>
