@@ -16,6 +16,8 @@ Product = {
     name: string,
     price: number,
     image: string,
+    quantity: int,
+    createdAt: string,
 }
 ```
 
@@ -115,6 +117,7 @@ Phải kiểm tra:
 * name: không rỗng
 * price: số hợp lệ > 0
 * image: URL hợp lệ (cơ bản)
+* quantity: số lượng > 0
 
 Hiển thị lỗi trực tiếp trên form
 
