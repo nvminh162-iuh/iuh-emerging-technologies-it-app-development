@@ -11,11 +11,17 @@ const renderAllController = async (req, res) => {
 const renderFormController = async (req, res) => {
   const { id } = req.params;
   const item = id ? await findById(id) : null;
-  return res.render("form", { item });
+  return res.render("form", { item, error: null });
   // return res.status(200).json(item)
 };
 
 const saveController = async (req, res) => {
+  const invalid = validation(req.body);
+  if (invalid) {
+    const item = { ...req.body, ...(req.params.id ? { id: req.params.id } : {}) };
+    return res.status(400).render("form", { item, error: invalid });
+  }
+
   try {
     await save(req.params.id, req.body, req.file);
     return res.redirect("/");

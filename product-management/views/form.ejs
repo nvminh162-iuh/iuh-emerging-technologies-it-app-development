@@ -7,6 +7,9 @@
 <body>
     <h1><%= !item ? "Thêm" : "Sửa" %></h1>
     <a href="/">Quay lại</a>
+    <% if (error) { %>
+        <p style="color: red;"><%= error %></p>
+    <% } %>
     <form action="/items<%= item ? "/" + item.id : "" %>" method="POST" enctype="multipart/form-data">
         <br>
         <input type="text" name="name" placeholder="Name" required value="<%= item?.name || '' %>">
