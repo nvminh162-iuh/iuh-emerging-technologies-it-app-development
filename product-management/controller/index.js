@@ -3,16 +3,24 @@ const { computeAmount, statusLabel, computeFinalAmount } = require('../utils')
 const { validation } = require("../validation")
 
 const renderAllController = async (req, res) => {
-  const items = await findAll();
+  let items = await findAll();
+  const { name, category } = req.query;
+
+  if (name) {
+    items = items.filter(item => item.name?.toLowerCase().includes(name.toLowerCase()));
+  }
+
+  if (category && category !== "ALL") {
+    items = items.filter(item => item.category === category);
+  }
+
   return res.render("index", { items, computeAmount, statusLabel, computeFinalAmount });
-  // return res.status(200).json(items)
 };
 
 const renderFormController = async (req, res) => {
   const { id } = req.params;
   const item = id ? await findById(id) : null;
   return res.render("form", { item, error: null });
-  // return res.status(200).json(item)
 };
 
 const saveController = async (req, res) => {
