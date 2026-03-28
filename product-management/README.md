@@ -1,177 +1,166 @@
-## 📝 ĐỀ BÀI THI: XÂY DỰNG CRUD PRODUCT VỚI EXPRESSJS + EJS
+# Product Management - Midterm CRUD (ExpressJS + EJS)
 
-### 🎯 Mục tiêu
+README này mô tả đúng hiện trạng code đã làm trong thư mục `product-management`.
 
-Xây dựng một ứng dụng web sử dụng **NodeJS + ExpressJS + EJS** để quản lý sản phẩm (Product), có đầy đủ chức năng CRUD và lưu trữ dữ liệu.
+## 1. Tổng quan
 
----
+Ứng dụng quản lý sản phẩm sử dụng:
 
-## 📦 1. Mô tả dữ liệu
+- Node.js + Express
+- EJS template engine
+- AWS DynamoDB để lưu dữ liệu
+- AWS S3 để lưu ảnh upload
+- Multer để xử lý file upload
 
-Đối tượng `Product` có cấu trúc:
+## 2. Cấu trúc dữ liệu Product
+
+Dữ liệu đang lưu trong DynamoDB có dạng thực tế:
 
 ```js
-Product = {
-    id: string,
-    name: string,
-    price: number,
-    image: string,
-    quantity: int,
-    createdAt: string,
+{
+  id: string,
+  name: string,
+  price: string | number,
+  quantity: string | number,
+  image?: string // URL ảnh trên S3 (nếu có)
 }
 ```
 
----
+Lưu ý:
 
-## ⚙️ 2. Yêu cầu chức năng
+- Trường `createdAt` chưa được sử dụng trong code hiện tại.
+- Giá trị `price`, `quantity` được tính toán thông qua `Number(...)` khi render.
 
-Ứng dụng phải có các chức năng sau:
+## 3. Route thực tế trong bài làm
 
-### 🔹 2.1. Hiển thị danh sách sản phẩm
+| Chức năng | Method | Route | Ghi chú |
+| --- | --- | --- | --- |
+| Danh sách sản phẩm | GET | `/` | Render `views/index.ejs` |
+| Mở form thêm | GET | `/form` | Render form rỗng |
+| Mở form sửa | GET | `/form/:id` | Đổ dữ liệu cũ lên form |
+| Tạo sản phẩm | POST | `/items` | Có thể upload `image` |
+| Cập nhật sản phẩm | POST | `/items/:id` | Giữ ảnh cũ nếu không upload mới |
+| Xóa sản phẩm | POST | `/items/delete/:id` | Xóa item và xóa ảnh S3 nếu có |
 
-* Route: `/products`
-* Hiển thị toàn bộ danh sách sản phẩm
-* Có hình ảnh, tên, giá
-* Có nút:
+## 4. Mô tả chức năng đã hoàn thành
 
-  * Xem chi tiết
-  * Sửa
-  * Xóa
+### 4.1 Hiển thị danh sách
 
----
+- Hiển thị: id, name, price, image, quantity.
+- Có thêm:
+  - `Status`: Còn vé / Sắp hết vé / Hết vé.
+  - `Amount = price * quantity`.
+- Có thao tác: Sửa, Xóa.
 
-### 🔹 2.2. Thêm sản phẩm mới
+### 4.2 Thêm sản phẩm
 
-* Route: `/products/create`
-* Form nhập:
+- Form nhập: `name`, `price`, `quantity`, `image(file)`.
+- Upload ảnh qua `multipart/form-data`.
+- Sau khi lưu thành công redirect về `/`.
 
-  * name
-  * price
-  * image (URL)
-* Validate:
+### 4.3 Cập nhật sản phẩm
 
-  * Không để trống
-  * price phải là số > 0
-* Sau khi thêm → redirect về danh sách
+- Tải dữ liệu cũ theo `id` lên form.
+- Nếu upload ảnh mới: upload lên S3 và xóa ảnh cũ trên S3.
+- Sau khi cập nhật thành công redirect về `/`.
 
----
+### 4.4 Xóa sản phẩm
 
-### 🔹 2.3. Cập nhật sản phẩm
+- Xóa bản ghi trong DynamoDB.
+- Nếu item có ảnh thì xóa file ảnh trên S3.
 
-* Route: `/products/edit/:id`
-* Hiển thị form với dữ liệu cũ
-* Validate giống create
-* Sau khi cập nhật → redirect về danh sách
+## 5. Validation đang áp dụng
 
----
+Validation server (`validation/index.js`):
 
-### 🔹 2.4. Xóa sản phẩm
+- `quantity >= 0`
+- `price >= 0`
 
-* Route: `/products/delete/:id`
-* Có xác nhận trước khi xóa (confirm)
-* Sau khi xóa → quay về danh sách
+Validation form HTML:
 
----
+- `name`, `price`, `quantity` bắt buộc (`required`).
 
-### 🔹 2.5. Xem chi tiết sản phẩm
+Lưu ý so với đề bài:
 
-* Route: `/products/:id`
-* Hiển thị đầy đủ thông tin sản phẩm
+- Đề bài yêu cầu `price > 0`, `quantity > 0`, check URL image.
+- Code hiện tại đang dùng upload file ảnh (không nhập URL), và chấp nhận `price = 0`, `quantity = 0`.
 
----
+## 6. Lưu trữ dữ liệu
 
-## 💾 3. Lưu trữ dữ liệu
+- DynamoDB Table: `Products`
+- S3 Bucket mặc định trong code: `nguyenvanminh-22003405-s3-midterm`
 
-Chọn 1 trong các cách sau:
+Thông tin AWS credentials đọc từ biến môi trường:
 
-* JSON file (khuyến khích cho bài thi cơ bản)
-* Hoặc MongoDB / SQLite (nếu muốn nâng cao)
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
 
----
+Region hiện tại hard-code: `ap-southeast-1`.
 
-## 🎨 4. Giao diện (EJS + CSS)
+## 7. Cấu trúc thư mục hiện tại
 
-### Yêu cầu:
-
-* Sử dụng **EJS template engine**
-* Có layout chung (header, footer)
-* Giao diện đẹp, rõ ràng
-
-### CSS:
-
-* Tự viết hoặc dùng:
-
-  * Bootstrap / Tailwind (được phép)
-* Có:
-
-  * Card sản phẩm
-  * Form đẹp
-  * Button rõ ràng
-
----
-
-## ✅ 5. Validation
-
-Phải kiểm tra:
-
-* name: không rỗng
-* price: số hợp lệ > 0
-* image: URL hợp lệ (cơ bản)
-* quantity: số lượng > 0
-
-Hiển thị lỗi trực tiếp trên form
-
----
-
-## 📁 6. Cấu trúc thư mục (gợi ý)
-
-```
-project/
-│── app.js
-│── routes/
-│   └── product.routes.js
-│── views/
-│   ├── products/
-│   └── layouts/
-│── public/
-│   └── css/
-│── models/
-│── data/
-│   └── products.json
+```text
+product-management/
+|-- index.js
+|-- package.json
+|-- .env
+|-- .env.example
+|-- config/
+|   `-- index.js
+|-- controller/
+|   `-- index.js
+|-- service/
+|   `-- index.js
+|-- validation/
+|   `-- index.js
+|-- utils/
+|   `-- index.js
+`-- views/
+    |-- index.ejs
+    `-- form.ejs
 ```
 
----
+## 8. Hướng dẫn chạy
 
-## ⭐ 7. Điểm cộng (không bắt buộc)
+### 8.1 Cài đặt
 
-* Tìm kiếm sản phẩm
-* Phân trang
-* Upload ảnh thay vì URL
-* Flash message (thông báo thành công/lỗi)
+```bash
+npm install
+```
 
----
+### 8.2 Cấu hình môi trường
 
-## 📊 8. Thang điểm (gợi ý)
+Tạo file `.env` (hoặc copy từ `.env.example`):
 
-| Tiêu chí            | Điểm |
-| ------------------- | ---- |
-| CRUD đầy đủ         | 4    |
-| Validation          | 2    |
-| EJS + Routing chuẩn | 2    |
-| Giao diện CSS       | 1    |
-| Clean code          | 1    |
+```env
+AWS_ACCESS_KEY_ID=your_access_key
+AWS_SECRET_ACCESS_KEY=your_secret_key
+```
 
----
+Đồng thời cần đảm bảo:
 
-## 🚀 9. Yêu cầu nộp bài
+- Đã tạo DynamoDB table `Products`.
+- Đã tạo S3 bucket và cấp quyền `PutObject/GetObject/DeleteObject`.
 
-* Source code
-* Hướng dẫn chạy (README.md)
-* Ảnh demo (optional)
+### 8.3 Chạy app
 
----
+```bash
+npm start
+```
 
-Nếu bạn muốn, mình có thể:
+App chạy tại: `http://localhost:3000`
 
-* Viết luôn **code mẫu full CRUD**
-* Hoặc tạo **template project hoàn chỉnh** để bạn dùng thi 👍
+## 9. Đánh giá mức độ đáp ứng đề bài
+
+- Có CRUD cơ bản: Đạt.
+- EJS + Routing: Đạt.
+- Validation: Đạt một phần (chưa đúng điều kiện `> 0`, chưa check URL image do đã đổi sang upload file).
+- Xem chi tiết riêng `/products/:id`: Chưa tách route riêng (hiển thị thông tin trong danh sách).
+- Confirm trước khi xóa: Chưa có hộp thoại confirm trên giao diện.
+
+## 10. Ghi chú cải tiến (nếu cần nâng điểm)
+
+- Thêm route chi tiết riêng cho từng sản phẩm.
+- Thêm confirm JS trước khi submit xóa.
+- Nâng validation thành `price > 0`, `quantity > 0`.
+- Tách CSS/public và bố cục giao diện đẹp hơn.
