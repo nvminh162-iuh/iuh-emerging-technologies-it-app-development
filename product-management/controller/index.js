@@ -7,7 +7,8 @@ const renderAllController = async (req, res) => {
   let items = await findAll();
 
   if (name) {
-    items = items.filter(item => item.name?.toLowerCase().includes(name.toLowerCase()));
+    const keyword = name.toLowerCase();
+    items = items.filter(item => item.name?.toLowerCase().includes(keyword) || item.customer?.toLowerCase().includes(keyword));
   }
 
   if (category && category !== "ALL") {

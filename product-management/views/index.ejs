@@ -11,7 +11,7 @@
     <br>
     <br>
     <form action="/" method="get">
-        <input type="text" name="name">
+        <input type="text" name="name" placeholder="Search name or customer">
         <br>
         <select name="category">
             <option value="ALL">ALL</option>
@@ -19,13 +19,14 @@
             <option value="PROMOTION">PROMOTION</option>
         </select>
         <br>
-        <button>Tìm/Lọc</button>
+        <button type="submit">Tìm/Lọc</button>
     </form>
     <br>
     <table border="1" width="80%" style="text-align: center;">
         <tr>
             <th>ID</th>
             <th>Name</th>
+            <th>Customer</th>
             <th>Price</th>
             <th>Image</th>
             <th>Quantity</th>
@@ -38,7 +39,7 @@
         </tr>
         <% if (!items || items.length === 0) { %>
             <tr>
-                <td colspan="10">Không có sản phẩm nào</td>
+                <td colspan="12">Không có sản phẩm nào</td>
             </tr>
             <% } else { %>
                 <% items.forEach(item => { %>
@@ -48,6 +49,7 @@
                     <tr>
                         <td><%= item.id %></td>
                         <td><%= item.name %></td>
+                        <td><%= item.customer %></td>
                         <td><%= formatCurrency(item.price) %></td>
                         <td>
                             <% if (item.image) { %>
