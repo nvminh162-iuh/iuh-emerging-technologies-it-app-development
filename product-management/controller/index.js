@@ -1,4 +1,4 @@
-const { findAll, findById, save, deleteById } = require("../service");
+const { service } = require("../service");
 const {
   computeAmount,
   statusLabel,
@@ -10,7 +10,7 @@ const { validation } = require("../validation");
 const controller = {
   renderAll: async (req, res) => {
     const { name, category, status, expiryFrom, expiryTo } = req.query;
-    let items = await findAll();
+    let items = await service.findAll();
 
     if (name) {
       const keyword = name.toLowerCase();
@@ -50,7 +50,7 @@ const controller = {
 
   renderForm: async (req, res) => {
     const { id } = req.params;
-    const item = id ? await findById(id) : null;
+    const item = id ? await service.findById(id) : null;
     return res.render("form", { item, error: null });
   },
 
@@ -65,7 +65,7 @@ const controller = {
     }
 
     try {
-      await save(req.params.id, req.body, req.file);
+      await service.save(req.params.id, req.body, req.file);
       return res.redirect("/");
     } catch (error) {
       return res.status(500).send(error.message);
@@ -74,7 +74,7 @@ const controller = {
 
   deleteById: async (req, res) => {
     try {
-      await deleteById(req.params.id);
+      await service.deleteById(req.params.id);
       return res.redirect("/");
     } catch (error) {
       return res.status(500).send(error.message);
