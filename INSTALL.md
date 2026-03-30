@@ -36,6 +36,9 @@ npm install @aws-sdk/client-s3 @aws-sdk/client-dynamodb @aws-sdk/lib-dynamodb ej
 ```
 "start": "nodemon index.js"
 ```
+```
+mkdir config,controller,service,utils,validation,views
+```
 
 # Extension
 + EJS language support
