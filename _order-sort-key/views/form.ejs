@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= item?.orderId ? 'Sửa đơn hàng' : 'Thêm đơn hàng' %></title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; color: #1a1a2e; }
+
+    header {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      color: white; padding: 18px 32px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    header h1 { font-size: 1.4rem; font-weight: 700; }
+    .btn-back {
+      padding: 8px 18px; border-radius: 8px; font-size: 0.875rem; font-weight: 600;
+      text-decoration: none; background: rgba(255,255,255,0.15); color: white;
+    }
+    .btn-back:hover { background: rgba(255,255,255,0.25); }
+
+    .form-container {
+      max-width: 760px; margin: 32px auto; background: white;
+      border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.09); overflow: hidden;
+    }
+    .form-body { padding: 32px; }
+
+    .error-box {
+      background: #fee2e2; border: 1px solid #fca5a5; border-radius: 8px;
+      padding: 12px 16px; color: #991b1b; font-size: 0.875rem; margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: #6b7280; margin: 24px 0 12px;
+      padding-bottom: 6px; border-bottom: 1px solid #e5e7eb;
+    }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label { font-size: 0.82rem; font-weight: 600; color: #374151; }
+    .form-group input, .form-group select {
+      padding: 10px 12px; border: 1.5px solid #d1d5db; border-radius: 8px;
+      font-size: 0.9rem; background: #f9fafb; transition: 0.2s;
+    }
+    .form-group input:focus, .form-group select:focus {
+      outline: none; border-color: #4f46e5; background: white;
+      box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+    }
+    .hint { font-size: 0.75rem; color: #9ca3af; }
+
+    .img-preview { margin-top: 12px; }
+    .img-preview img { max-width: 200px; border-radius: 8px; border: 2px solid #e5e7eb; }
+
+    .form-actions { margin-top: 28px; display: flex; gap: 12px; }
+    .btn-submit {
+      padding: 12px 32px; background: #4f46e5; color: white;
+      border: none; border-radius: 10px; font-size: 1rem;
+      font-weight: 700; cursor: pointer; transition: 0.2s;
+    }
+    .btn-submit:hover { background: #4338ca; }
+    .btn-cancel {
+      padding: 12px 24px; background: #f3f4f6; color: #4b5563;
+      border: none; border-radius: 10px; font-size: 1rem; font-weight: 600;
+      cursor: pointer; text-decoration: none; display: inline-flex; align-items: center;
+    }
+    .btn-cancel:hover { background: #e5e7eb; }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/" class="btn-back">← Quay lại</a>
+    <h1><%= item?.orderId ? '✏️ Sửa đơn hàng' : '➕ Thêm đơn hàng mới' %></h1>
+  </header>
+
+  <div class="form-container">
+    <div class="form-body">
+      <% if (error) { %>
+        <div class="error-box">⚠️ <%= error %></div>
+      <% } %>
+
+      <form action="<%= item?.orderId ? '/items/' + item.orderId + '/' + item.orderDate : '/items' %>"
+            method="POST" enctype="multipart/form-data">
+
+        <p class="section-title">Thông tin đơn hàng</p>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Tên khách hàng *</label>
+            <input type="text" name="customerName" required
+                   value="<%= item?.customerName || '' %>" placeholder="Nguyễn Văn A">
+          </div>
+          <div class="form-group">
+            <label>Ngày đặt hàng * <span class="hint">(không nhỏ hơn hôm nay)</span></label>
+            <input type="date" name="orderDate" required
+                   value="<%= item?.orderDate || '' %>"
+                   min="<%= new Date().toISOString().split('T')[0] %>">
+          </div>
+        </div>
+
+        <p class="section-title">Thông tin sản phẩm</p>
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>Tên sản phẩm *</label>
+            <input type="text" name="productName" required
+                   value="<%= item?.productName || '' %>" placeholder="iPhone 15 Pro">
+          </div>
+          <div class="form-group">
+            <label>Danh mục *</label>
+            <select name="category" required>
+              <option value="">-- Chọn danh mục --</option>
+              <% ['Electronics', 'Fashion', 'Food'].forEach(c => { %>
+                <option value="<%= c %>" <%= item?.category === c ? 'selected' : '' %>><%= c %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Số lượng * <span class="hint">(nguyên > 0)</span></label>
+            <input type="number" name="quantity" required min="1" step="1"
+                   value="<%= item?.quantity || '' %>" placeholder="1">
+          </div>
+          <div class="form-group">
+            <label>Đơn giá (VNĐ) * <span class="hint">(> 0)</span></label>
+            <input type="number" name="unitPrice" required min="1"
+                   value="<%= item?.unitPrice || '' %>" placeholder="500000">
+          </div>
+          <div class="form-group">
+            <label>Thuế suất (%) <span class="hint">(ví dụ: 10)</span></label>
+            <input type="number" name="taxRate" required min="0" max="100"
+                   value="<%= item?.taxRate ?? 10 %>" placeholder="10">
+          </div>
+        </div>
+
+        <p class="section-title">Thanh toán & Ảnh</p>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Trạng thái thanh toán *</label>
+            <select name="paymentStatus" required>
+              <option value="">-- Chọn trạng thái --</option>
+              <% ['Pending', 'Paid', 'Refunded'].forEach(s => { %>
+                <option value="<%= s %>" <%= item?.paymentStatus === s ? 'selected' : '' %>><%= s %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Ảnh sản phẩm <span class="hint">(upload lên S3)</span></label>
+            <input type="file" name="image" accept="image/*">
+          </div>
+        </div>
+
+        <% if (item?.imageUrl) { %>
+          <div class="img-preview">
+            <p class="hint" style="margin-bottom:6px">Ảnh hiện tại:</p>
+            <img src="<%= item.imageUrl %>" alt="<%= item.productName %>">
+          </div>
+        <% } %>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-submit">
+            <%= item?.orderId ? '💾 Lưu thay đổi' : '✅ Tạo đơn hàng' %>
+          </button>
+          <a href="/" class="btn-cancel">Hủy</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
