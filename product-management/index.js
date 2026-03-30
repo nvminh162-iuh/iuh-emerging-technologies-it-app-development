@@ -17,4 +17,4 @@ app.post("/items", upload.single("image"), controller.save);
 app.post("/items/:id", upload.single("image"), controller.save);
 app.post("/items/delete/:id", controller.deleteById);
 
-app.listen(3000, () => console.log(`SERVER RUNNING ...`));
+app.listen(3001, () => console.log(`SERVER RUNNING ...`));

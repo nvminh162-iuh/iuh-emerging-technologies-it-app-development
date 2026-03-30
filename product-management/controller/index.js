@@ -1,4 +1,3 @@
-const { controller } = require("../../product-management-creation/controller");
 const { findAll, findById, save, deleteById } = require("../service");
 const {
   computeAmount,
